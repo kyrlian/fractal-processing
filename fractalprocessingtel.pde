@@ -1,6 +1,7 @@
-int imax=255;
+
+int imax=555;
 double limit=4.0;
-double eps=0.0001;
+double eps=0.0;//00001;
 int btnsize=100;
 double xmin;
 double ymin;
@@ -14,34 +15,44 @@ void setup() {
   reset();
 }
 void frac() {
-  loadPixels();
+  loadPixels(); 
   double step=w/width;
   double cr=xmin;
-  for (int i = 0; i < width; i++) {
+  for (int i = 0; i < width; i++) { 
     double ci=ymin;
     for (int j = 0; j < height; j++) {
       int iter=0;
       double zr=cr;
+      double nzr = zr;
       double zi=ci;
-      double dr=1;
-      double di=0;
-      while ( iter<imax && (zr*zr+zi*zi)<limit && (dr*dr+di*di)>eps) {
+      double zr2= zr*zr;
+      double zi2= zi*zi;
+      //double dr=1;
+      // double di=0;
+      double dr2 =1;
+      double di2 =0;
+      double zn = zr2+zi2;
+      
+      while ( iter<imax && zn<limit && (dr2+di2)>eps) {
         // d=2z
-        dr = 2*zr;
-        di = 2*zi;
+        //dr = 2*zr;
+        //di = 2*zi;
         //z=z2+c
-        double nzr=zr*zr-zi*zi+cr;
+        nzr = zr2-zi2+cr;
         zi=2*zr*zi+ci;
         zr=nzr;
         iter++;
+        zr2 = zr*zr;
+        zi2 = zi*zi;
+        dr2 = 4*zr2;
+        di2 = 4*zi2;
+        zn = zr2+zi2;
       }
-      color co=color(0, 0, 0);
-      if (iter<imax && (dr*dr+di*di)>eps) {
-        //int h = int( 255*log(iter)/log(imax));
-        int h = int( 255*iter/imax);
-        //int h = int(255/(zr*zr+zi*zi));
-        co=color(h, 255, 255);
-      }
+      // color
+     // float zn = (float)( zr2+zi2);
+      // zn is 0(interior)to 4(exterior)
+      color co=color(iter%255, 255, (int)(zn/4*255));
+      //color co=color(255, dd,255);
       //set(i, j, c);
       pixels[j*width+i]=co;
       ci+=step;
@@ -55,11 +66,11 @@ void controls() {
   //noFill();
   //rect(0, 0,btnsize, btnsize);
   //rect(width-btnsize, 0, width, btnsize);
-  //rect(0, height-btnsize,  btnsize, height);
+  //rect(0, height-btnsize, btnsize, height);
   fill(0, 0, 0);
-  textSize(btnsize);
-  text("R", 10, btnsize-10);
-  text("-", width-90, 90);
+  textSize(btnsize); 
+  text("R", 10, btnsize-10); 
+  text("-", width-90, 90); 
   //text("Q", 10, height-10);
 }
 void rawcopy() {
@@ -79,14 +90,14 @@ void rawcopy() {
   //copy(tx, ty, cpw, cph, fx, fy, cpw, cph);
   loadPixels();
   color[] tpixels = new color[width*height];
-  for (int i = fx; i < cpw; i++) {
+  for (int i = fx; i < cpw; i++) { 
     for (int j = fy; j < cph; j++) {
       int di=i+mdx;
       int dj=j+mdy;
       tpixels[dj*width+di]=pixels[j*width+i];
     }
   }
-  for (int i = 0; i < width; i++) {
+  for (int i = 0; i < width; i++) { 
     for (int j = 0; j < height; j++) {
       pixels[j*width+i]=tpixels[j*width+i];
     }
@@ -110,7 +121,7 @@ void draw() {
     controls();
   }
 }
-void mouseReleased() {//mousePressed() {
+void mouseReleased() {//mousePressed() { 
   if (drag == false) {
     if (mouseX<btnsize && mouseY<btnsize) {
       reset();
@@ -140,7 +151,7 @@ void zoom() {
   xmax=xmin+w;
   ymax=ymin+h;
 }
-void mouseDragged() {
+void mouseDragged() { 
   drag=true;
   int mdx=mouseX-pmouseX;
   int mdy=mouseY-pmouseY;
